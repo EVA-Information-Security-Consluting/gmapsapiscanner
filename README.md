@@ -1,60 +1,116 @@
-# Google Maps API Scanner
+# EVA Upgraded - Google Maps API Scanner by Bar Hajby
 
-Used for determining whether a leaked/found Google Maps API Key is vulnerable to unauthorized access by other applications or not.  
+**Enhanced version with 32+ API endpoint checks**
 
-***[Blog Post #1 - Unauthorized Google Maps API Key Usage Cases, and Why You Need to Care](https://medium.com/bugbountywriteup/unauthorized-google-maps-api-key-usage-cases-and-why-you-need-to-care-1ccb28bf21e)***
+Used for determining whether a leaked/found Google Maps API Key is vulnerable to unauthorized access by other applications or not.
 
-***[Blog Post #2 - Google Maps API (Not the Key) Bugs That I Found Over the Years](https://medium.com/bugbountywriteup/google-maps-api-not-the-key-bugs-that-i-found-over-the-years-781840fc82aa)***
+***Original tool by [Ozgur Alp](https://github.com/ozguralp/gmapsapiscanner)***
 
-***Please note that most of the bug bounty platforms marking this vulnerability type as informational/low impact. So please make sure that the platform or program is accepting this kind of issues before reporting.***
+***[Blog Post #1 - Unauthorized Google Maps API Key Usage Cases](https://medium.com/bugbountywriteup/unauthorized-google-maps-api-key-usage-cases-and-why-you-need-to-care-1ccb28bf21e)***
 
-***Usage:***
+***[Blog Post #2 - Google Maps API Bugs Over the Years](https://medium.com/bugbountywriteup/google-maps-api-not-the-key-bugs-that-i-found-over-the-years-781840fc82aa)***
 
-- Either download the Python file directly or install it with **pip** or **pipx**.
-- Script will return `API key is vulnerable for XXX API!` message and the PoC link/code if determines any unauthorized access within this API key within any API's.
 
-```
+---
+
+## Usage
+
+Run directly or install with **pip** or **pipx**:
+
+```bash
+# Direct usage
+python eva_gmaps_scanner.py --api-key YOUR_KEY
+
+# Or install with pipx
 pipx install git+https://github.com/ozguralp/gmapsapiscanner
-gmapsapiscanner --api-key KEY
+eva-gmaps-scanner --api-key YOUR_KEY
 ```
 
-***Checked APIs:***
-- Staticmap API
-- Streetview API
-- <s>Embed (Basic-Free) API</s> (No longer checked since it is completely free.)
-- <s>Embed (Advanced-Paid) API</s> (No longer checked since it is completely free.)
-- Directions API
-- Geocode API
-- Distance Matrix API
-- Find Place From Text API
-- Autocomplete API
-- Elevation API
-- Timezone API
-- Roads API
-- Geolocation API
-- Route to Traveled API
-- Speed Limit-Roads API
-- Place Details API
-- Nearby Search-Places API
-- Text Search-Places API
-- Places Photo API
-- <s>Playable Locations API</s> (API is deprecated.)
-- FCM API
-- Custom Search API
+Script returns `API key is vulnerable for XXX API!` with PoC links/commands for any unauthorized access detected.
 
-***Semi-Auto Checked APIs:***
-- JavaScript API
+---
 
-***Notes:***
-- Because JavaScript API needs manual confirmation from a web browser directly, only file is created via the script for manual checks/confirmation.
-- For Staticmap, Streetview and Embed API's, if used from another domain instead of just testing from browser; whether referer checks are enabled or not on the server-side for the key, script still could return it as vulnerable due to a server-side vulnerability. If you cannot reproduce the vulnerability via browser while the script says so, please read the ***Blog Post #2*** for more information & a better understanding about what is going on. 
-- If you find any Google Maps API's which are not mentioned in this document/script, create an issue with details so I can also add them.
-- Special thanks to [Yatin](https://twitter.com/ysirpaul) for his contributions on both discovery of additional API's & cost information!
+## Checked APIs (32 Total)
 
+### Legacy APIs (v1)
+1. Staticmap API - $2/1K requests
+2. Streetview API - $7/1K requests
+3. Directions API - $5/1K requests
+4. Geocode API - $5/1K requests
+5. Distance Matrix API - $5/1K elements
+6. Find Place From Text API - $17/1K requests
+7. Autocomplete API - $2.83/1K requests
+8. Query Autocomplete API - $2.83/1K requests
+9. Elevation API - $5/1K requests
+10. Timezone API - $5/1K requests
+11. Nearest Roads API - $10/1K requests
+12. Snap to Roads API - $10/1K requests
+13. Speed Limits API - $20/1K requests
+14. Place Details API - $17/1K requests
+15. Nearby Search API - $32/1K requests
+16. Text Search API - $32/1K requests
+17. Places Photo API - $7/1K requests
+18. Geolocation API - $5/1K requests
+
+### Next-Gen APIs (v2)
+19. Routes API (Compute Routes) - $5/1K requests
+20. Routes API (Route Matrix) - $10/1K elements
+21. Places API (Nearby Search - New) - $32/1K requests
+22. Places API (Text Search - New) - $32/1K requests
+23. Address Validation API - $17/1K requests
+
+### Environmental & Specialized APIs
+24. Air Quality API - Contact Google
+25. Pollen API - Contact Google
+26. Solar API - Contact Google
+27. Aerial View API - Contact Google
+28. Playable Locations API - Contact Google
+
+### Web APIs
+29. Map Tiles API - $2/1K requests
+30. Maps Embed API - Free (with restrictions)
+31. Maps JavaScript API - $7/1K requests (automated + manual check)
+32. FCM API - Takeover vulnerability
+
+---
+
+## Features
+
+✅ **32 API endpoint checks** (vs 19 in original)  
+✅ **Organized output** - Numbered tests with separators  
+✅ **Latest API versions** - Routes v2, Places v2  
+✅ **New environmental APIs** - Air Quality, Pollen, Solar  
+✅ **Automated + Manual** JavaScript API testing  
+✅ **Cost information** for each vulnerable API  
+
+---
+
+## Notes
+
+- JavaScript API offers both automated check and optional manual browser verification
+- For Staticmap, Streetview, and Embed APIs: If script shows vulnerable but browser reproduction fails, check **Blog Post #2** for server-side vulnerability details
+- Referer checks may affect results when testing from different domains
+- Special thanks to [Yatin](https://twitter.com/ysirpaul) for contributions on API discovery & cost information!
+
+---
 
 ## Docker
-To run this script in a Dockerized Alpine Linux environment, use the following commands:
+
+Run in a Dockerized Alpine Linux environment:
+
+```bash
+docker build -t eva_gmaps_scanner .
+docker run --rm -v $(pwd):/opt/html -i eva_gmaps_scanner <api-key>
 ```
-docker build -t google_maps_api_scanner .
-docker run --rm -v $(pwd):/opt/html -i docker.io/library/google_maps_api_scanner <api key>
-```
+
+---
+
+## Credits
+
+- **Original Tool**: [Ozgur Alp](https://github.com/ozguralp/gmapsapiscanner)
+- **EVA Upgrade**: Bar Hajby (2025)
+- **Contributors**: [Yatin](https://twitter.com/ysirpaul)
+
+---
+
+**Version**: EVA 1.0 (Enhanced with 13+ API checks)

@@ -1,9 +1,10 @@
 [project]
-name = "gmapsapiscanner"
+name = "eva-gmapsapiscanner"
 version = "1.0.0"
-description = "Google Maps API Scanner - Tests Google Maps API keys for vulnerabilities"
+description = "EVA Upgraded - Google Maps API Scanner by Bar Hajby - Enhanced version with 32+ API endpoint checks"
 authors = [
-    { name = "Ozgur Alp", email = "info@ozguralp.com" }
+    { name = "Ozgur Alp", email = "info@ozguralp.com" },
+    { name = "Bar Hajby" }
 ]
 readme = "README.md"
 license = { text = "MIT" }
@@ -16,7 +17,7 @@ dependencies = [
 repository = "https://github.com/ozguralp/gmapsapiscanner"
 
 [project.scripts]
-gmapsapiscanner = "maps_api_scanner:main"
+eva-gmaps-scanner = "eva_gmaps_scanner:main"
 
 [project.optional-dependencies]
 dev = [
