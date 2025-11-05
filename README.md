@@ -156,7 +156,7 @@ Run in a Dockerized Alpine Linux environment:
 
 ```bash
 docker build -t eva_gmaps_scanner .
-docker run --rm -v $(pwd):/opt/html -i eva_gmaps_scanner <api-key>
+docker run --rm -v $(pwd):/opt/html -i eva_gmaps_scanner --api-key <api-key>
 ```
 
 ---
