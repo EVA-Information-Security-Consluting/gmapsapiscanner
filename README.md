@@ -21,10 +21,21 @@ Run directly or install with **pip** or **pipx**:
 # Direct usage
 python eva_gmaps_scanner.py --api-key YOUR_KEY
 
+# With proxy (defaults to 127.0.0.1:8080)
+python eva_gmaps_scanner.py --api-key YOUR_KEY -p
+
+# With custom proxy
+python eva_gmaps_scanner.py --api-key YOUR_KEY --proxy http://proxy.example.com:3128
+
 # Or install with pipx
 pipx install git+https://github.com/ozguralp/gmapsapiscanner
 eva-gmaps-scanner --api-key YOUR_KEY
 ```
+
+**Options:**
+- `-a, --api-key KEY` - Google Maps API key to test (required)
+- `-p, --proxy [URL]` - Route through proxy (default: `http://127.0.0.1:8080`)
+- `-h, --help` - Show help message
 
 Script returns `API key is vulnerable for XXX API!` with PoC links/commands for any unauthorized access detected.
 
@@ -82,6 +93,7 @@ Script returns `API key is vulnerable for XXX API!` with PoC links/commands for 
 ✅ **New environmental APIs** - Air Quality, Pollen, Solar  
 ✅ **Automated + Manual** JavaScript API testing  
 ✅ **Cost information** for each vulnerable API  
+✅ **Proxy support** - Route requests through proxy (Burp Suite, etc.)  
 
 ---
 

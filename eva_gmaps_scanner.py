@@ -3,17 +3,28 @@ import warnings
 import json
 import sys
 import os
+import argparse
 
 
-def scan_gmaps(apikey):
+def scan_gmaps(apikey, proxy_url=None):
 	vulnerable_apis = []
 	test_number = 1
+	
+	# Setup proxy configuration
+	proxies = None
+	if proxy_url:
+		proxies = {
+			'http': proxy_url,
+			'https': proxy_url
+		}
+		print(f"[+] Using proxy: {proxy_url}")
+		print("")
 	
 	print("--------------------------")
 	print(f"{test_number}. Testing Staticmap API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/staticmap?center=45%2C10&zoom=7&size=400x400&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.status_code == 200:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Staticmap API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -30,7 +41,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Streetview API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=40.720032,-73.988354&fov=90&heading=235&pitch=10&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.status_code == 200:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Streetview API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -47,7 +58,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Directions API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood4&key="+apikey
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Directions API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -62,7 +73,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Geocode API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=40,30&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Geocode API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -76,7 +87,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Distance Matrix API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=40.6655101,-73.89188969999998&destinations=40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.6905615%2C-73.9976592%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626%7C40.659569%2C-73.933783%7C40.729029%2C-73.851524%7C40.6860072%2C-73.6334271%7C40.598566%2C-73.7527626&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Distance Matrix API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -91,7 +102,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Find Place From Text API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=Museum%20of%20Contemporary%20Art%20Australia&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key="+apikey
-	response = requests.get(url, verify=False) 
+	response = requests.get(url, verify=False, proxies=proxies) 
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Find Place From Text API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -105,7 +116,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Autocomplete API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Bingh&types=%28cities%29&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Autocomplete API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -120,7 +131,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Elevation API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/elevation/json?locations=39.7391536,-104.9847034&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Elevation API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -134,7 +145,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Timezone API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/timezone/json?location=39.6034810,-119.6822510&timestamp=1331161200&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("errorMessage") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Timezone API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -148,7 +159,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Nearest Roads API")
 	print("--------------------------")
 	url = "https://roads.googleapis.com/v1/nearestRoads?points=60.170880,24.942795|60.170879,24.942796|60.170877,24.942796&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Nearest Roads API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -163,7 +174,7 @@ def scan_gmaps(apikey):
 	print("--------------------------")
 	url = "https://www.googleapis.com/geolocation/v1/geolocate?key="+apikey 
 	postdata = {'considerIp': 'true'}
-	response = requests.post(url, data=postdata, verify=False)
+	response = requests.post(url, data=postdata, verify=False, proxies=proxies)
 	if response.text.find("error") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Geolocation API! Here is the PoC curl command which can be used from terminal:")
 		print("curl -i -s -k  -X $'POST' -H $'Host: www.googleapis.com' -H $'Content-Length: 22' --data-binary $'{\"considerIp\": \"true\"}' $'"+url+"'")
@@ -177,7 +188,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Route to Traveled API (Snap to Roads)")
 	print("--------------------------")
 	url = "https://roads.googleapis.com/v1/snapToRoads?path=-35.27801,149.12958|-35.28032,149.12907&interpolate=true&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Route to Traveled API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -191,7 +202,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Speed Limit-Roads API")
 	print("--------------------------")
 	url = "https://roads.googleapis.com/v1/speedLimits?path=38.75807927603043,-9.03741754643809&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Speed Limit-Roads API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -205,7 +216,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Place Details API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJN1t_tDeuEmsRUsoyG83frY4&fields=name,rating,formatted_phone_number&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Place Details API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -219,7 +230,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Nearby Search-Places API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522,151.1957362&radius=100&types=food&name=harbour&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Nearby Search-Places API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -233,7 +244,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Text Search-Places API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants+in+Sydney&key="+apikey 
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Text Search-Places API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -278,7 +289,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Query Autocomplete API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/place/queryautocomplete/json?input=pizza+near%20Par&key="+apikey
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.text.find("error_message") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Query Autocomplete API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -406,7 +417,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Pollen API")
 	print("--------------------------")
 	url = "https://pollen.googleapis.com/v1/forecast:lookup?key="+apikey+"&location.latitude=37.419734&location.longitude=-122.0827784&days=1"
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.status_code == 200 and response.text.find("error") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Pollen API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -424,7 +435,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Solar API")
 	print("--------------------------")
 	url = "https://solar.googleapis.com/v1/buildingInsights:findClosest?location.latitude=37.4450&location.longitude=-122.1390&key="+apikey
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.status_code == 200 and response.text.find("error") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Solar API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -480,7 +491,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Map Tiles API")
 	print("--------------------------")
 	url = "https://tile.googleapis.com/v1/2dtiles/2/2/2?session=&key="+apikey
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.status_code == 200:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Map Tiles API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -512,7 +523,7 @@ def scan_gmaps(apikey):
 	print(f"{test_number}. Testing Maps JavaScript API")
 	print("--------------------------")
 	url = "https://maps.googleapis.com/maps/api/js?key="+apikey+"&callback=initMap"
-	response = requests.get(url, verify=False)
+	response = requests.get(url, verify=False, proxies=proxies)
 	if response.status_code == 200 and response.text.find("InvalidKeyMapError") < 0:
 		print("API key is \033[1;31;40mvulnerable\033[0m for Maps JavaScript API! Here is the PoC link which can be used directly via browser:")
 		print(url)
@@ -549,21 +560,43 @@ def scan_gmaps(apikey):
 
 def main() -> None:
 	warnings.filterwarnings("ignore")
-	if len(sys.argv) > 1:
-		if sys.argv[1] == "--api-key" or sys.argv[1] == "-a":
-			if len(sys.argv) > 2:
-				scan_gmaps(sys.argv[2])
-			else:
-				print("Missing api key, aborting.")
-				print("Either use --api-key as argument such \"python eva_gmaps_scanner.py --api-key KEY\" or directly run script as \"python eva_gmaps_scanner.py\" and supply API key via input.")
-		elif sys.argv[1] == "--help" or sys.argv[1] == "-h":
-			print("Either use --api-key as argument such \"python eva_gmaps_scanner.py --api-key KEY\" or directly run script as \"python eva_gmaps_scanner.py\" and supply API key via input.")
-		else:
-			print("Invalid arguments, aborting.")
-			print("Either use --api-key as argument such \"python eva_gmaps_scanner.py --api-key KEY\" or directly run script as \"python eva_gmaps_scanner.py\" and supply API key via input.")
+	
+	parser = argparse.ArgumentParser(
+		description='EVA Upgraded - Google Maps API Scanner by Bar Hajby',
+		formatter_class=argparse.RawDescriptionHelpFormatter,
+		epilog='''
+Examples:
+  python eva_gmaps_scanner.py --api-key YOUR_KEY
+  python eva_gmaps_scanner.py -a YOUR_KEY -p http://127.0.0.1:8080
+  python eva_gmaps_scanner.py -a YOUR_KEY --proxy http://proxy.example.com:3128
+		'''
+	)
+	
+	parser.add_argument(
+		'-a', '--api-key',
+		type=str,
+		help='Google Maps API key to test'
+	)
+	
+	parser.add_argument(
+		'-p', '--proxy',
+		type=str,
+		nargs='?',
+		const='http://127.0.0.1:8080',
+		default=None,
+		help='Proxy URL (default: http://127.0.0.1:8080 if flag is used without value)'
+	)
+	
+	args = parser.parse_args()
+	
+	# Get API key from argument or prompt
+	if args.api_key:
+		apikey = args.api_key
 	else:
 		apikey = input("Please enter the Google Maps API key you wanted to test: ")
-		scan_gmaps(apikey)
+	
+	# Run scan with optional proxy
+	scan_gmaps(apikey, args.proxy)
 
 if __name__ == "__main__":
     main()
