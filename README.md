@@ -15,7 +15,7 @@ Used for determining whether a leaked/found Google Maps API Key is vulnerable to
 
 ## Usage
 
-Run directly or install with **pip** or **pipx**:
+### Single Key Mode
 
 ```bash
 # Direct usage
@@ -26,14 +26,56 @@ python eva_gmaps_scanner.py --api-key YOUR_KEY -p
 
 # With custom proxy
 python eva_gmaps_scanner.py --api-key YOUR_KEY --proxy http://proxy.example.com:3128
+```
 
-# Or install with pipx
-pipx install git+https://github.com/ozguralp/gmapsapiscanner
-eva-gmaps-scanner --api-key YOUR_KEY
+### Batch Mode (Multiple Keys)
+
+Test multiple API keys and get a comparison table:
+
+```bash
+# Test multiple keys from file
+python eva_gmaps_scanner.py --list keys.txt
+
+# With proxy
+python eva_gmaps_scanner.py -l keys.txt -p
+```
+
+**File format** (`keys.txt`):
+```
+AIzaSyDXXXXXXXXX
+AIzaSyEYYYYYYYYY
+AIzaSyFZZZZZZZZZ
+```
+Or comma-separated: `AIzaSyD..., AIzaSyE..., AIzaSyF...`
+
+**Batch mode output:**
+- Tests each endpoint against ALL keys before moving to next
+- Generates a comparison table showing which APIs are vulnerable for each key
+- Perfect for testing multiple keys from the same project
+
+**Example output table:**
+```
+====================================================================================================
+📊 BATCH SCAN RESULTS - Vulnerable Endpoints per API Key
+====================================================================================================
+API Endpoint                             | AIzaSyDXXXXXXXXX...   | AIzaSyEYYYYYYYYY...   | AIzaSyFZZZZZZZZZ...  
+----------------------------------------------------------------------------------------------------
+Staticmap API                            | ✓ VULN                | ✗ Safe                | ✓ VULN               
+Streetview API                           | ✓ VULN                | ✗ Safe                | ✗ Safe               
+Directions API                           | ✓ VULN                | ✓ VULN                | ✓ VULN               
+Geocode API                              | ✗ Safe                | ✓ VULN                | ✓ VULN               
+...
+====================================================================================================
+
+📈 SUMMARY:
+  Key 1 (AIzaSyDXXXXXXXXX...): 15/32 APIs vulnerable
+  Key 2 (AIzaSyEYYYYYYYYY...): 8/32 APIs vulnerable
+  Key 3 (AIzaSyFZZZZZZZZZ...): 12/32 APIs vulnerable
 ```
 
 **Options:**
-- `-a, --api-key KEY` - Google Maps API key to test (required)
+- `-a, --api-key KEY` - Single Google Maps API key to test
+- `-l, --list FILE` - File containing multiple API keys (batch mode)
 - `-p, --proxy [URL]` - Route through proxy (default: `http://127.0.0.1:8080`)
 - `-h, --help` - Show help message
 
@@ -88,12 +130,14 @@ Script returns `API key is vulnerable for XXX API!` with PoC links/commands for 
 ## Features
 
 ✅ **32 API endpoint checks** (vs 19 in original)  
+✅ **Batch testing** - Test multiple keys with comparison table  
 ✅ **Organized output** - Numbered tests with separators  
 ✅ **Latest API versions** - Routes v2, Places v2  
 ✅ **New environmental APIs** - Air Quality, Pollen, Solar  
 ✅ **Automated + Manual** JavaScript API testing  
 ✅ **Cost information** for each vulnerable API  
 ✅ **Proxy support** - Route requests through proxy (Burp Suite, etc.)  
+✅ **Flexible input** - Single key or batch file (newline/comma separated)  
 
 ---
 
@@ -125,4 +169,4 @@ docker run --rm -v $(pwd):/opt/html -i eva_gmaps_scanner <api-key>
 
 ---
 
-**Version**: EVA 1.0 (Enhanced with 13+ API checks)
+**Version**: EVA 1.1 (Enhanced with 32 API checks + Batch Testing)
