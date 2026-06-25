@@ -1,7 +1,7 @@
 [project]
 name = "eva-gmapsapiscanner"
-version = "1.0.0"
-description = "EVA Upgraded - Google Maps API Scanner by Bar Hajby - Enhanced version with 32+ API endpoint checks"
+version = "1.2.0"
+description = "EVA Upgraded - Google API Scanner by Bar Hajby - 46+ endpoint checks across Google Maps, Gemini AI, Google Cloud AI/ML, and Firebase Auth"
 authors = [
     { name = "Ozgur Alp", email = "info@ozguralp.com" },
     { name = "Bar Hajby" }

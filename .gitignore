@@ -143,3 +143,5 @@ cython_debug/
 
 # Claude settings
 .claude/*
+# Scan output reports
+reports/

@@ -1,8 +1,8 @@
-# EVA Upgraded - Google Maps API Scanner by Bar Hajby
+# EVA Upgraded - Google API Scanner by Bar Hajby
 
-**Enhanced version with 32+ API endpoint checks**
+**Enhanced version with 46+ API endpoint checks — now covers Google Maps, Gemini AI, Google Cloud AI/ML, Firebase Auth, YouTube, and more.**
 
-Used for determining whether a leaked/found Google Maps API Key is vulnerable to unauthorized access by other applications or not.
+Used for determining whether a leaked/found Google API Key is vulnerable to unauthorized access by other applications or not. While historically focused on the Google Maps Platform, modern Google API keys (`AIzaSy…`) routinely unlock far more than maps — including generative AI (Gemini), Cloud Vision, Speech, Translation, Firebase Auth, and YouTube Data APIs — all of which carry serious abuse / cost / data-exposure risks when leaked.
 
 ***Original tool by [Ozgur Alp](https://github.com/ozguralp/gmapsapiscanner)***
 
@@ -58,23 +58,24 @@ Or comma-separated: `AIzaSyD..., AIzaSyE..., AIzaSyF...`
 ====================================================================================================
 📊 BATCH SCAN RESULTS - Vulnerable Endpoints per API Key
 ====================================================================================================
-API Endpoint                             | AIzaSyDXXXXXXXXX...   | AIzaSyEYYYYYYYYY...   | AIzaSyFZZZZZZZZZ...  
+API Endpoint                             | AIzaSyDXXXXXXXXX...   | AIzaSyEYYYYYYYYY...   | AIzaSyFZZZZZZZZZ...
 ----------------------------------------------------------------------------------------------------
-Staticmap API                            | ✓ VULN                | ✗ Safe                | ✓ VULN               
-Streetview API                           | ✓ VULN                | ✗ Safe                | ✗ Safe               
-Directions API                           | ✓ VULN                | ✓ VULN                | ✓ VULN               
-Geocode API                              | ✗ Safe                | ✓ VULN                | ✓ VULN               
+Staticmap API                            | ✓ VULN                | ✗ Safe                | ✓ VULN
+Gemini API (gemini-2.0-flash)            | ✓ VULN                | ✗ Safe                | ✓ VULN
+Cloud Vision API                         | ✗ Safe                | ✓ VULN                | ✓ VULN
+Firebase Auth - Identity Toolkit         | ✓ VULN                | ✓ VULN                | ✓ VULN
+YouTube Data API v3                      | ✓ VULN                | ✗ Safe                | ✓ VULN
 ...
 ====================================================================================================
 
 📈 SUMMARY:
-  Key 1 (AIzaSyDXXXXXXXXX...): 15/32 APIs vulnerable
-  Key 2 (AIzaSyEYYYYYYYYY...): 8/32 APIs vulnerable
-  Key 3 (AIzaSyFZZZZZZZZZ...): 12/32 APIs vulnerable
+  Key 1 (AIzaSyDXXXXXXXXX...): 22/46 APIs vulnerable
+  Key 2 (AIzaSyEYYYYYYYYY...): 11/46 APIs vulnerable
+  Key 3 (AIzaSyFZZZZZZZZZ...): 18/46 APIs vulnerable
 ```
 
 **Options:**
-- `-a, --api-key KEY` - Single Google Maps API key to test
+- `-a, --api-key KEY` - Single Google API key to test
 - `-l, --list FILE` - File containing multiple API keys (batch mode)
 - `-p, --proxy [URL]` - Route through proxy (default: `http://127.0.0.1:8080`)
 - `-h, --help` - Show help message
@@ -83,9 +84,9 @@ Script returns `API key is vulnerable for XXX API!` with PoC links/commands for 
 
 ---
 
-## Checked APIs (32 Total)
+## Checked APIs (46 Total)
 
-### Legacy APIs (v1)
+### Maps Legacy APIs (v1)
 1. Staticmap API - $2/1K requests
 2. Streetview API - $7/1K requests
 3. Directions API - $5/1K requests
@@ -105,7 +106,7 @@ Script returns `API key is vulnerable for XXX API!` with PoC links/commands for 
 17. Places Photo API - $7/1K requests
 18. Geolocation API - $5/1K requests
 
-### Next-Gen APIs (v2)
+### Maps Next-Gen APIs (v2)
 19. Routes API (Compute Routes) - $5/1K requests
 20. Routes API (Route Matrix) - $10/1K elements
 21. Places API (Nearby Search - New) - $32/1K requests
@@ -125,18 +126,41 @@ Script returns `API key is vulnerable for XXX API!` with PoC links/commands for 
 31. Maps JavaScript API - $7/1K requests (automated + manual check)
 32. FCM API - Takeover vulnerability
 
+### Google AI - Gemini & Generative Language (NEW)
+33. **Gemini API - List Models** - Probe of accessible Gemini models
+34. **Gemini API - `generateContent`** (gemini-2.0-flash, falls back to gemini-1.5-flash) - ~$0.10/$0.40 per 1M input/output tokens — **HIGH ABUSE RISK** (LLM costs can blow up fast)
+
+### Google Cloud AI / ML APIs (NEW)
+35. **Cloud Vision API** - $1.50 per 1K requests (LABEL_DETECTION)
+36. **Cloud Natural Language API** - $1 per 1K records (sentiment)
+37. **Cloud Translation API (v2)** - $20 per 1M characters
+38. **Cloud Text-to-Speech API** - $4/1M chars (Standard), $16/1M (WaveNet/Neural2)
+39. **Cloud Speech-to-Text API** - $0.016/min (~$0.96/hour)
+40. **Cloud Video Intelligence API** - $0.10/min (LABEL_DETECTION)
+
+### Identity / Security / Data APIs (NEW)
+41. **Identity Toolkit / Firebase Auth** (`accounts:signUp`) - **CRITICAL** - Anonymous signup → account creation abuse, Firebase DB access via issued tokens
+42. **Safe Browsing API v4** - Free (quota-limited) — info disclosure / quota abuse
+43. **YouTube Data API v3** - Free with 10K units/day quota — data scraping abuse
+44. **Custom Search JSON API** - $5/1K queries (after 100/day free)
+45. **Google Books API** - Free (quota-limited)
+46. **Maps JavaScript API (manual)** - Browser-side confirmation (optional)
+
 ---
 
 ## Features
 
-✅ **32 API endpoint checks** (vs 19 in original)  
-✅ **Batch testing** - Test multiple keys with comparison table  
-✅ **Organized output** - Numbered tests with separators  
-✅ **Latest API versions** - Routes v2, Places v2  
-✅ **New environmental APIs** - Air Quality, Pollen, Solar  
-✅ **Automated + Manual** JavaScript API testing  
-✅ **Cost information** for each vulnerable API  
-✅ **Proxy support** - Route requests through proxy (Burp Suite, etc.)  
+✅ **46 API endpoint checks** (Maps + Google AI + Cloud + Identity)
+✅ **Gemini AI coverage** - `generateContent` + model enumeration
+✅ **Cloud AI/ML coverage** - Vision, NLP, Translation, TTS, STT, Video Intelligence
+✅ **Firebase Auth abuse detection** - Identity Toolkit `signUp` (anonymous + email/password)
+✅ **Batch testing** - Test multiple keys with comparison table
+✅ **Organized output** - Numbered tests with separators + section headers
+✅ **Latest API versions** - Routes v2, Places v2, Gemini v1beta
+✅ **Environmental APIs** - Air Quality, Pollen, Solar
+✅ **Automated + Manual** JavaScript API testing
+✅ **Cost information** for each vulnerable API
+✅ **Proxy support** - Route ALL requests (GET + POST) through proxy (Burp Suite, etc.)
 ✅ **Flexible input** - Single key or batch file (newline/comma separated)  
 
 ---
@@ -145,7 +169,10 @@ Script returns `API key is vulnerable for XXX API!` with PoC links/commands for 
 
 - JavaScript API offers both automated check and optional manual browser verification
 - For Staticmap, Streetview, and Embed APIs: If script shows vulnerable but browser reproduction fails, check **Blog Post #2** for server-side vulnerability details
-- Referer checks may affect results when testing from different domains
+- Referer / Application restrictions on the key may affect results when testing from different domains/clients — try without referer first, then iterate
+- **Gemini / Generative Language API**: tests `gemini-2.0-flash` first, then falls back to `gemini-1.5-flash`. If both fail, the key likely has the Generative Language API disabled or restricted
+- **Firebase Auth (Identity Toolkit)** is one of the most dangerous exposures — even when anonymous signup is disabled, the key being accepted means an attacker may still call `accounts:signUp`, `accounts:sendOobCode`, `accounts:lookup`, `accounts:signInWithPassword`, etc. Always investigate further if marked vulnerable
+- For STT / Video Intelligence: the included GCS sample URIs are public Google demo buckets — if the key cannot reach them due to project permissions, the test conservatively marks the key as "Safe" (false negatives possible)
 - Special thanks to [Yatin](https://twitter.com/ysirpaul) for contributions on API discovery & cost information!
 
 ---
@@ -169,4 +196,4 @@ docker run --rm -v $(pwd):/opt/html -i eva_gmaps_scanner <api-key>
 
 ---
 
-**Version**: EVA 1.1 (Enhanced with 32 API checks + Batch Testing)
+**Version**: EVA 1.2 (46 API checks — Maps + Gemini AI + Google Cloud + Firebase Auth + Batch Testing)
